@@ -4,7 +4,7 @@ import mapboxgl from '!mapbox-gl'
 
 mapboxgl.accessToken = 'pk.eyJ1Ijoia3Rlc3NhIiwiYSI6ImNrdm02NnUwOTFkMGcydXRrY3BqMnVvZjAifQ.5NPC2IM1wrRGTLOk8rtNqw';
 
-const Map = () => {
+const Map = (props) => {
     useEffect(() => {
         const map = new mapboxgl.Map({
             container: 'map',
@@ -12,8 +12,15 @@ const Map = () => {
             center: [-1.286389, 36.817223],
             zoom: 3
         })
-    
+            addToMap(map);
         });
+
+        const addToMap= (map) => {
+            const marker1 = new mapboxgl.Marker()
+            .setLngLat([12.55, 55.70651])
+            .addTo(map);
+        
+        }
 
     return (
         <Wrapper id="map">
