@@ -12,12 +12,27 @@ const Map = (props) => {
             center: [-1.286389, 36.817223],
             zoom: 3
         })
-            addToMap(map);
-        });
+            if(props.pickupCoordinates){
+                addToMap(map, props.pickupCoordinates)
+            }
 
-        const addToMap= (map) => {
+            if(props.dropoffCoordinates) {
+                addToMap(map, props.dropoffCoordinates)
+            }
+
+            if(props.pickupCoordinates && props.dropoffCoordinates){
+                map.fitBounds([
+                    props.dropoffCoordinates,
+                    props.pickupCoordinates
+                ], {
+                    padding: 60,
+                })
+            }
+        }, [props.pickupCoordinates, props.dropoffCoordinates]);
+
+        const addToMap= (map, coordinates) => {
             const marker1 = new mapboxgl.Marker()
-            .setLngLat([12.55, 55.70651])
+            .setLngLat(coordinates)
             .addTo(map);
         
         }
@@ -31,5 +46,5 @@ const Map = (props) => {
 
 export default Map
     const Wrapper = tw.div`
-    flex-1 
+    flex-1 h-1/2 
     ` 
