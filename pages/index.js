@@ -1,34 +1,57 @@
-
+import React, {useEffect, useState} from 'react'
+import {useRouter} from 'next/router'
 import tw from "tailwind-styled-components"
 import Map from './components/Map'
 import Link from 'next/link'
+import { auth } from '../firebase'
+import {onAuthStateChanged, signOut} from 'firebase/auth'
 
 
 export default function Home() {
+  const [user, setUser] = useState(null)
+  const router = useRouter()
+
+  useEffect(() => {
+    return onAuthStateChanged(auth, user => {
+      if (user){
+        setUser({
+          name: user.displayName,
+          photoUrl: user.photoURL,
+        })
+      } else {
+        setUser(null)
+        router.push('/login')
+      }
+    })
+  },[])
   
   return (
     <>
     <Wrapper>
       <Header>
-        <UberLogo >Uber</UberLogo>
+        <Link href='/' passHref>
+          <UberLogo >Uber</UberLogo>
+        </Link>
         <Profile>
-          <Avatar src='avatar.jpeg'></Avatar>
-          <Login>Sign Out</Login>
-          <Menu>Menu</Menu>
+          <Avatar 
+            src={user && user.photoUrl}
+          ></Avatar>
+          <Name>{user && user.name}</Name>
+          <Login  onClick={()=> signOut(auth)}>Sign Out</Login>
         </Profile>
       </Header>
       
       <Map />
       <ActionItems>
         <ActionButtons>
-          <Link href='/search' passHref>
             <ActionButton><ActionImage src='https://i.ibb.co/cyvcpfF/uberx.png' />Ride</ActionButton>
-          </Link>
             <ActionButton><ActionImage src='https://i.ibb.co/n776JLm/bike.png' />Wheels</ActionButton>
             <ActionButton><ActionImage src='https://i.ibb.co/5RjchBg/uberschedule.png' />Reserve</ActionButton>
           
         </ActionButtons>
-        <InputButton>Where to?</InputButton>
+        <Link href='/search' passHref>
+          <InputButton>Where to?</InputButton>
+        </Link>
       </ActionItems>
       
       </Wrapper>
@@ -70,13 +93,11 @@ const Profile = tw.div`
   flex items-center mr-6 
 `
 const Avatar = tw.img`
-h-12 w-12 border border-gray-200 p-px rounded-full
+h-12 w-12 border border-gray-200 p-px rounded-full cursor-pointer mr-2
 `
-
+const Name = tw.div``
 const Login = tw.button`
 mx-4 bg-gray-200 text-black bold px-2 py-1 rounded-2xl  `
 
-const Menu = tw.menu`
-`
 
 const InputButton = tw.button`h-20 bg-gray-200 text-2xl p-4 flex items-center mt-8 rounded-md`
